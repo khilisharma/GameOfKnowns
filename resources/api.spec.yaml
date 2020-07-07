@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  description: This API lets users play the trivia game called Game Of Knowns
+  version: 1.0.0
+  title: Game Of Knowns - API 
+  # put the contact info for your development or API team
+  contact:
+    email: khili22.sharma@gmail.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+
+paths:
+  /game:
+    post:
+      summary: Join the Game 
+      operationId: joinGame
+      description: Lets the player create profile and join the next available game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        200:
+          description: Token Id needed to get playerId and gameId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinGameJob'
+        500:
+          description: Internal Server Exception
+        400:
+          description: Invalid request
+  /token:
+    get:
+      summary: Get the status, and if status is JOINED, get the playerId and gameId
+      operationId: describeToken
+      description: Lets the player retrieve status, playerId and gameId
+      parameters: 
+        - in: query
+          name: tokenId
+          schema:
+            type: string
+          required: true
+          description: Unique identifier returned to a player needed to retrieve gameId and playerId
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDetails'
+          description: TokenDetails include status, playerId and gameID
+        404:
+          description: Resource Not found
+        500:
+          description: Internal Server Exception
+  /questions:     
+    get:
+      summary: Get the question along with the multiple choices.
+      operationId: getQuestion 
+      description: Lets the player get the question in an ongoing game
+      parameters:
+        - in: query
+          name: playerId
+          schema:
+            type: string
+          required: true
+          description: UUID assigned to the player.
+        - in: query
+          name: gameId
+          schema:
+            type: string
+          required: true
+          description: Unique identifier of the game to which the player gets joined to
+      responses:
+        200:
+          description: a question object 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        400:
+          description: Bad input parameter
+        401:
+          description: Illegal access exception
+        404:
+          description: Resource Not found
+        500:
+          description: Internal server error
+  /answers:     
+    post:
+      summary: Submit answer for a question
+      operationId: submitAnswer 
+      description: Lets the player submit answer for a question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAnswerRequest'
+      responses:
+        200:
+          description: Choice can be RIGHT or WRONG
+          content:
+            application/json:
+              schema:
+                type: string
+                enum: [RIGHT, WRONG]
+        400:
+          description: Bad input parameter
+        500:
+          description: Internal Server error
+  /stats:
+    get:
+      summary: Get the statistics for a question/round in a game.
+      operationId: getStatistics
+      description: Displays the statistics for a question/round in a game.
+      parameters:
+        - in: query
+          name: gameId
+          schema:
+            type: string
+          description: Unique identifier of the game to which the player gets joined to
+        - in: query
+          name: questionId
+          schema:
+            type: string
+          description: Unique identifier for a question
+      responses:
+        200:
+          description: Statistics object which shows how many players chose each answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        404:
+          description: Resource Not Found
+        400:
+          description: Bad input parameter
+        401:
+          description: Not authorized to access
+components:
+  schemas:
+    Statistics:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Stat'
+    Stat:
+      type: object
+      properties:
+        choiceId:
+          type: string 
+        count:
+          type: integer
+    TokenDetails:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [JOINED, WAIT]
+        playerId:
+          type: string
+        gameId:
+          type: string
+    JoinGameJob:
+      type: object
+      properties:
+        tokenId:
+          type: string
+    Question:
+      type: object
+      properties:
+        questionId:
+          type: string
+        questionText:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/Choice'
+    Choice:
+      type: object
+      properties:
+        choiceId:
+          type: string
+        text:
+          type: string
+    SubmitAnswerRequest:
+      type: object
+      required:
+        - playerId
+        - gameId
+        - questionId
+        - answerId
+      properties:
+        playerId:
+          type: string
+        gameId:
+          type: string
+        questionId:
+          type: string
+        answerId:
+          type: string
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/khilisharma/GameOfKnowns/1.0.0
