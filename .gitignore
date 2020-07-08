@@ -1,0 +1,4 @@
+.idea
+.swagger-codegen*
+swagger-jaxrs-server.iml
+target
