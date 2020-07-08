@@ -12,6 +12,8 @@
 
 package io.swagger.model;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,7 +35,7 @@ import javax.validation.constraints.*;
   private String questionText = null;
 
   @JsonProperty("choices")
-  private List<Map<String, Choice>> choices = null;
+  private Map<String, Choice> choices = null;
 
   public Question questionId(String questionId) {
     this.questionId = questionId;
@@ -73,16 +75,16 @@ import javax.validation.constraints.*;
     this.questionText = questionText;
   }
 
-  public Question choices(List<Map<String, Choice>> choices) {
+  public Question choices(Map<String, Choice> choices) {
     this.choices = choices;
     return this;
   }
 
-  public Question addChoicesItem(Map<String, Choice> choicesItem) {
+  public Question addChoicesItem(Entry<String, Choice> choicesItem) {
     if (this.choices == null) {
-      this.choices = new ArrayList<Map<String, Choice>>();
+      this.choices = new HashMap<String, Choice>();
     }
-    this.choices.add(choicesItem);
+    this.choices.put(choicesItem.getKey(), choicesItem.getValue());
     return this;
   }
 
@@ -92,11 +94,11 @@ import javax.validation.constraints.*;
    **/
   @JsonProperty("choices")
   @Schema(description = "")
-  public List<Map<String, Choice>> getChoices() {
+  public Map<String, Choice> getChoices() {
     return choices;
   }
 
-  public void setChoices(List<Map<String, Choice>> choices) {
+  public void setChoices(Map<String, Choice> choices) {
     this.choices = choices;
   }
 
