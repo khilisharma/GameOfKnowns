@@ -1,26 +1,44 @@
 package io.swagger.api.impl;
 
-import io.swagger.api.*;
-import io.swagger.model.*;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gameofknowns.dao.TokenDao;
+import io.swagger.api.GameApiService;
+import io.swagger.api.NotFoundException;
 import io.swagger.model.Body;
 import io.swagger.model.JoinGameJob;
-
-import java.util.Map;
-import java.util.List;
-import io.swagger.api.NotFoundException;
-
-import java.io.InputStream;
-
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-
+import java.util.UUID;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import javax.validation.constraints.*;
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class GameApiServiceImpl extends GameApiService {
-    @Override
-    public Response joinGame(Body body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+@AllArgsConstructor
+public class GameApiServiceImpl extends GameApiService {
+
+  @Inject
+  private TokenDao tokenDao;
+  @Inject
+  private ObjectMapper mapper;
+
+  @Override
+  public Response joinGame(Body body, SecurityContext securityContext) throws NotFoundException {
+    final String name = body.getName();
+    if (StringUtils.isBlank(name)) {
+      return Response.status(Status.BAD_REQUEST).build();
     }
+    try {
+      final UUID playerUuid = UUID.randomUUID();
+      final String tokenId = tokenDao.addPlayer(name, playerUuid.randomUUID().toString());
+      // TODO: think of retry mechanism when the game is filled while processing the request
+      final JoinGameJob reponse = new JoinGameJob();
+      reponse.setTokenId(tokenId);
+      return Response.ok().entity(mapper.writeValueAsString(reponse)).build();
+    } catch (final Exception ex) {
+      return Response.serverError().build();
+    }
+
+  }
 }

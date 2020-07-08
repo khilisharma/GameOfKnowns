@@ -98,6 +98,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -112,12 +120,6 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback-version}</version>
       <scope>compile</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>4.0</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>

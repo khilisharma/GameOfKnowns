@@ -1,6 +1,8 @@
 package io.swagger.api;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class StringUtil {
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class StringUtil {
+
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).
    *
@@ -10,8 +12,12 @@ package io.swagger.api;
    */
   public static boolean containsIgnoreCase(String[] array, String value) {
     for (String str : array) {
-      if (value == null && str == null) return true;
-      if (value != null && value.equalsIgnoreCase(str)) return true;
+      if (value == null && str == null) {
+        return true;
+      }
+      if (value != null && value.equalsIgnoreCase(str)) {
+        return true;
+      }
     }
     return false;
   }
@@ -19,8 +25,8 @@ package io.swagger.api;
   /**
    * Join an array of strings with the given separator.
    * <p>
-   * Note: This might be replaced by utility method from commons-lang or guava someday
-   * if one of those libraries is added as dependency.
+   * Note: This might be replaced by utility method from commons-lang or guava someday if one of
+   * those libraries is added as dependency.
    * </p>
    *
    * @param array     The array of strings
@@ -29,7 +35,9 @@ package io.swagger.api;
    */
   public static String join(String[] array, String separator) {
     int len = array.length;
-    if (len == 0) return "";
+    if (len == 0) {
+      return "";
+    }
 
     StringBuilder out = new StringBuilder();
     out.append(array[0]);

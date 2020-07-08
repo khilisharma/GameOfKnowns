@@ -12,16 +12,16 @@
 
 package io.swagger.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Body
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class Body   {
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class Body {
+
   @JsonProperty("name")
   private String name = null;
 
@@ -32,6 +32,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get name
+   *
    * @return name
    **/
   @JsonProperty("name")
@@ -67,15 +68,15 @@ import javax.validation.constraints.*;
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Body {\n");
-    
+
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

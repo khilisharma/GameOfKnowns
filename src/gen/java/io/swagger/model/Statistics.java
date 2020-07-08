@@ -12,16 +12,14 @@
 
 package io.swagger.model;
 
-import java.util.Objects;
-import io.swagger.model.Stat;
 import java.util.HashMap;
-import java.util.Map;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Statistics
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class Statistics extends HashMap<String, Stat>  {
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class Statistics extends HashMap<String, Integer> {
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -50,8 +48,8 @@ import javax.validation.constraints.*;
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

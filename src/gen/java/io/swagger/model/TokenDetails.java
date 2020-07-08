@@ -12,53 +12,22 @@
 
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * TokenDetails
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class TokenDetails   {
-  /**
-   * Gets or Sets status
-   */
-  public enum StatusEnum {
-    JOINED("JOINED"),
-    
-    WAIT("WAIT");
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class TokenDetails {
 
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("status")
   private StatusEnum status = null;
-
   @JsonProperty("playerId")
   private String playerId = null;
-
   @JsonProperty("gameId")
   private String gameId = null;
 
@@ -69,6 +38,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get status
+   *
    * @return status
    **/
   @JsonProperty("status")
@@ -88,6 +58,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get playerId
+   *
    * @return playerId
    **/
   @JsonProperty("playerId")
@@ -107,6 +78,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get gameId
+   *
    * @return gameId
    **/
   @JsonProperty("gameId")
@@ -118,7 +90,6 @@ import javax.validation.constraints.*;
   public void setGameId(String gameId) {
     this.gameId = gameId;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -139,12 +110,11 @@ import javax.validation.constraints.*;
     return Objects.hash(status, playerId, gameId);
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TokenDetails {\n");
-    
+
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    playerId: ").append(toIndentedString(playerId)).append("\n");
     sb.append("    gameId: ").append(toIndentedString(gameId)).append("\n");
@@ -153,13 +123,44 @@ import javax.validation.constraints.*;
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  /**
+   * Gets or Sets status
+   */
+  public enum StatusEnum {
+    JOINED("JOINED"),
+
+    WAIT("WAIT");
+
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String text) {
+      for (StatusEnum b : StatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
   }
 }

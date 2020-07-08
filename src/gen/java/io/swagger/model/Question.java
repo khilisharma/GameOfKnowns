@@ -12,22 +12,19 @@
 
 package io.swagger.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.Choice;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.validation.constraints.*;
 
 /**
  * Question
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class Question   {
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class Question {
+
   @JsonProperty("questionId")
   private String questionId = null;
 
@@ -35,7 +32,7 @@ import javax.validation.constraints.*;
   private String questionText = null;
 
   @JsonProperty("choices")
-  private Map<String, Choice> choices = null;
+  private Map<Integer, String> choices = null;
 
   public Question questionId(String questionId) {
     this.questionId = questionId;
@@ -44,6 +41,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get questionId
+   *
    * @return questionId
    **/
   @JsonProperty("questionId")
@@ -63,6 +61,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get questionText
+   *
    * @return questionText
    **/
   @JsonProperty("questionText")
@@ -75,14 +74,14 @@ import javax.validation.constraints.*;
     this.questionText = questionText;
   }
 
-  public Question choices(Map<String, Choice> choices) {
+  public Question choices(Map<Integer, String> choices) {
     this.choices = choices;
     return this;
   }
 
-  public Question addChoicesItem(Entry<String, Choice> choicesItem) {
+  public Question addChoicesItem(Entry<Integer, String> choicesItem) {
     if (this.choices == null) {
-      this.choices = new HashMap<String, Choice>();
+      this.choices = new HashMap<Integer, String>();
     }
     this.choices.put(choicesItem.getKey(), choicesItem.getValue());
     return this;
@@ -90,15 +89,16 @@ import javax.validation.constraints.*;
 
   /**
    * Get choices
+   *
    * @return choices
    **/
   @JsonProperty("choices")
   @Schema(description = "")
-  public Map<String, Choice> getChoices() {
+  public Map<Integer, String> getChoices() {
     return choices;
   }
 
-  public void setChoices(Map<String, Choice> choices) {
+  public void setChoices(Map<Integer, String> choices) {
     this.choices = choices;
   }
 
@@ -127,7 +127,7 @@ import javax.validation.constraints.*;
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Question {\n");
-    
+
     sb.append("    questionId: ").append(toIndentedString(questionId)).append("\n");
     sb.append("    questionText: ").append(toIndentedString(questionText)).append("\n");
     sb.append("    choices: ").append(toIndentedString(choices)).append("\n");
@@ -136,8 +136,8 @@ import javax.validation.constraints.*;
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

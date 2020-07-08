@@ -12,16 +12,17 @@
 
 package io.swagger.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.*;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
 /**
  * SubmitAnswerRequest
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")public class SubmitAnswerRequest   {
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+public class SubmitAnswerRequest {
+
   @JsonProperty("playerId")
   private String playerId = null;
 
@@ -41,6 +42,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get playerId
+   *
    * @return playerId
    **/
   @JsonProperty("playerId")
@@ -61,6 +63,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get gameId
+   *
    * @return gameId
    **/
   @JsonProperty("gameId")
@@ -81,6 +84,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get questionId
+   *
    * @return questionId
    **/
   @JsonProperty("questionId")
@@ -101,6 +105,7 @@ import javax.validation.constraints.*;
 
   /**
    * Get answerId
+   *
    * @return answerId
    **/
   @JsonProperty("answerId")
@@ -140,7 +145,7 @@ import javax.validation.constraints.*;
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SubmitAnswerRequest {\n");
-    
+
     sb.append("    playerId: ").append(toIndentedString(playerId)).append("\n");
     sb.append("    gameId: ").append(toIndentedString(gameId)).append("\n");
     sb.append("    questionId: ").append(toIndentedString(questionId)).append("\n");
@@ -150,8 +155,8 @@ import javax.validation.constraints.*;
   }
 
   /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces (except the first
+   * line).
    */
   private String toIndentedString(java.lang.Object o) {
     if (o == null) {

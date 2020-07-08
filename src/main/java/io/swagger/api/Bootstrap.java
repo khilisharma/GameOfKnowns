@@ -1,10 +1,5 @@
 package io.swagger.api;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -12,8 +7,8 @@ import io.swagger.v3.oas.annotations.info.License;
 
 @OpenAPIDefinition(
     info = @Info(
-        title = "Swagger Server", 
-        version = "1.0.0", 
+        title = "Swagger Server",
+        version = "1.0.0",
         description = "This API lets users play the trivia game called Game Of Knowns",
         termsOfService = "",
         contact = @Contact(email = "khili22.sharma@gmail.com"),
@@ -24,4 +19,5 @@ import io.swagger.v3.oas.annotations.info.License;
     )
 )
 public class Bootstrap {
+
 }
