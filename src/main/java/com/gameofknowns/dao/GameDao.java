@@ -1,6 +1,5 @@
 package com.gameofknowns.dao;
 
-import com.gameofknowns.dao.model.Choice;
 import com.gameofknowns.dao.model.Game;
 import com.gameofknowns.dao.model.Player;
 import com.gameofknowns.dao.model.Question;
@@ -17,9 +16,13 @@ public interface GameDao {
 
   Question getQuestion(String gameId, String playerId);
 
-  Map<Choice, Integer> getStatistics(String questionId, String gameId);
+  Map<String, Integer> getStatistics(String questionId, String gameId);
 
   String createGame();
 
   List<Game> getOpenGames();
+
+  void submitAnswer(String questionId, String choiceId, String gameId);
+
+  boolean isPlayerInTheGame(String gameId, String playerId);
 }

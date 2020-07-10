@@ -14,9 +14,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
+@Slf4j
 public class AnswersApiServiceImpl extends AnswersApiService {
 
   @Inject
@@ -31,19 +33,28 @@ public class AnswersApiServiceImpl extends AnswersApiService {
       throws NotFoundException {
 
     // call question to know correct answer
+    final String gameId = body.getGameId();
+    final String choiceId = body.getAnswerId();
+    final String questionId = body.getQuestionId();
+    final String playerId = body.getPlayerId();
     try {
-      final Question question = questionsDao.getQuestion(body.getQuestionId());
-      if (question.getRightAnswer().getChoiceId().equals(body.getAnswerId())) {
-        gameDao.advancePlayer(body.getGameId(), body.getPlayerId());
+      final Question question = questionsDao.getQuestion(questionId);
+      if (!gameDao.isPlayerInTheGame(gameId, playerId)) {
+        return Response.status(Status.FORBIDDEN).build();
+      }
+      gameDao.submitAnswer(questionId, choiceId, gameId);
+      if (question.getRightAnswer().keySet().contains(choiceId)) {
+        gameDao.advancePlayer(gameId, playerId);
         return Response.ok().entity(SubmitAnswerResponse.RIGHT.toString()).build();
       } else {
         return Response.ok().entity(SubmitAnswerResponse.WRONG.toString()).build();
       }
     } catch (final ResourceNotFoundException ex) {
-      return Response.noContent().build();
-    } catch (final IllegalArgumentException ex) {
-      return Response.status(Status.fromStatusCode(403)).build();
+      log.debug("Resouce not found, questionId: {}, gameId: {}, playerId: {}, choiceId: {}",
+          questionId, gameId, playerId, choiceId, ex);
+      return Response.status(Status.NOT_FOUND).build();
     } catch (final Exception ex) {
+      log.error("Something went wrong!!", ex);
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
   }

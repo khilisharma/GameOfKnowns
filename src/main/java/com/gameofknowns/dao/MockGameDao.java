@@ -1,6 +1,5 @@
 package com.gameofknowns.dao;
 
-import com.gameofknowns.dao.model.Choice;
 import com.gameofknowns.dao.model.Game;
 import com.gameofknowns.dao.model.Player;
 import com.gameofknowns.dao.model.Question;
@@ -31,13 +30,13 @@ public class MockGameDao implements GameDao {
   @Override
   public Question getQuestion(String gameId, String playerId) {
     if (playerId.equals("2")) {
-      throw new IllegalAccessException("biathc");
+      throw new IllegalAccessException("Player Not Allowed");
     }
-    return new Question(new HashMap<String, Choice>(), "123123", "asdasd", null);
+    return new Question(new HashMap<>(), "123123", "asdasd", new HashMap<>());
   }
 
   @Override
-  public Map<Choice, Integer> getStatistics(String questionId, String gameId) {
+  public Map<String, Integer> getStatistics(String questionId, String gameId) {
     return new HashMap<>();
   }
 
@@ -49,5 +48,15 @@ public class MockGameDao implements GameDao {
   @Override
   public List<Game> getOpenGames() {
     return Arrays.asList();
+  }
+
+  @Override
+  public void submitAnswer(String questionId, String choiceId, String gameId) {
+
+  }
+
+  @Override
+  public boolean isPlayerInTheGame(String gameId, String playerId) {
+    return false;
   }
 }

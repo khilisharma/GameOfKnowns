@@ -12,10 +12,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
 @AllArgsConstructor
+@Slf4j
 public class GameApiServiceImpl extends GameApiService {
 
   @Inject
@@ -37,6 +39,7 @@ public class GameApiServiceImpl extends GameApiService {
       reponse.setTokenId(tokenId);
       return Response.ok().entity(mapper.writeValueAsString(reponse)).build();
     } catch (final Exception ex) {
+      log.error("Something went wrong!!", ex);
       return Response.serverError().build();
     }
 

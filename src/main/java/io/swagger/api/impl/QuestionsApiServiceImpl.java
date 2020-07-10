@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gameofknowns.dao.GameDao;
 import com.gameofknowns.dao.exception.IllegalAccessException;
 import com.gameofknowns.dao.exception.ResourceNotFoundException;
-import com.gameofknowns.dao.model.Choice;
 import com.gameofknowns.dao.model.Question;
 import io.swagger.api.NotFoundException;
 import io.swagger.api.QuestionsApiService;
@@ -17,9 +16,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
 @AllArgsConstructor
+@Slf4j
 public class QuestionsApiServiceImpl extends QuestionsApiService {
 
   @Inject
@@ -35,10 +36,12 @@ public class QuestionsApiServiceImpl extends QuestionsApiService {
       return Response.ok()
           .entity(mapper.writeValueAsString(response)).build();
     } catch (final ResourceNotFoundException ex) {
-      return Response.noContent().build();
+      log.debug("Resource not found, playerId: {}, gameId: {}", playerId, gameId, ex);
+      return Response.status(Status.NOT_FOUND).build();
     } catch (final IllegalAccessException ex) {
       return Response.status(Status.fromStatusCode(403)).build();
     } catch (final Exception ex) {
+      log.error("Something went wrong!!", ex);
       return Response.serverError().build();
     }
 
@@ -48,9 +51,9 @@ public class QuestionsApiServiceImpl extends QuestionsApiService {
       @NotNull String gameId) {
     final Question question = gameDao.getQuestion(gameId, playerId);
     final Map<Integer, String> choices = new HashMap<>();
-    for (Entry<String, Choice> choice : question.getChoices().entrySet()) {
-      choices.put(Integer.parseInt(choice.getValue().getChoiceId()),
-          choice.getValue().getText());
+    for (Entry<String, String> choice : question.getChoices().entrySet()) {
+      choices.put(Integer.parseInt(choice.getKey()),
+          choice.getValue());
     }
     final io.swagger.model.Question response = new io.swagger.model.Question();
     response.setQuestionText(question.getQuestionText());
