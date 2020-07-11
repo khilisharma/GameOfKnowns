@@ -7,6 +7,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @Data
 @Builder
 public class Player {
+
   public Player(@BsonProperty("playerId") String playerId,
       @BsonProperty("playerName") String playerName) {
     this.playerId = playerId;

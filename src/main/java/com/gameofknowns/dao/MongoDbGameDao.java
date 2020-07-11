@@ -2,7 +2,7 @@ package com.gameofknowns.dao;
 
 import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_FIRST_CHOICE_COUNT;
 import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_GAME_ID;
-import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_IS_BEING_PLAYED;
+import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_GAME_STATUS;
 import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_PLAYERS;
 import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_PLAYER_ID;
 import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_QUESTION_ID;
@@ -15,14 +15,17 @@ import static com.mongodb.client.model.Filters.eq;
 
 import com.gameofknowns.dao.exception.ResourceNotFoundException;
 import com.gameofknowns.dao.model.Game;
+import com.gameofknowns.dao.model.GameStatusEnum;
 import com.gameofknowns.dao.model.Player;
 import com.gameofknowns.dao.model.Question;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,7 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Adds player to game when game not in progress
+   *
    * @param player
    * @param gameId
    */
@@ -67,6 +71,7 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Advances player to next round. Creates a new round and adds player if no next round exist.
+   *
    * @param gameId
    * @param playerId
    */
@@ -74,17 +79,23 @@ public class MongoDbGameDao implements GameDao {
   public void advancePlayer(String gameId, String playerId) {
     // verify if new round exists
     Game newRound = database.getCollection(COLLECTION_GAMES)
-        .find(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_IS_BEING_PLAYED, false)), Game.class)
+        .find(and(eq(ATTRIBUTE_GAME_ID, gameId),
+            eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.WAITING_FOR_PLAYERS.toString())), Game.class)
         .sort(eq(ATTRIBUTE_ROUND, -1)).first();
+
     // if no create new one
     if (null == newRound) {
       Game currentRound = database.getCollection(COLLECTION_GAMES)
           .find(eq(ATTRIBUTE_GAME_ID, gameId), Game.class).sort(eq(ATTRIBUTE_ROUND, -1)).first();
       currentRound.setRound(Integer.parseInt(currentRound.getRound()) + 1 + "");
-      currentRound.setGameFlag(false);
+      currentRound.setGameStatus("IN_PROGRESS");
       currentRound.setPlayers(Arrays.asList());
       currentRound.setQuestionId("");
       database.getCollection(COLLECTION_GAMES, Game.class).insertOne(currentRound);
+    } else {
+      final Document newPlayerDocument = new Document();
+      newPlayerDocument.append(ATTRIBUTE_PLAYER_ID, playerId);
+      database.getCollection(COLLECTION_GAMES).updateOne(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_ROUND, newRound.getRound())), Updates.push(ATTRIBUTE_PLAYERS, newPlayerDocument));
     }
     // add player to new round
     addPlayer(new Player(playerId, null), gameId);
@@ -92,6 +103,7 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Adds a new question to game, if not being played.
+   *
    * @param questionId
    * @param gameId
    * @throws IllegalAccessException if tried to update question for game in progress
@@ -99,7 +111,8 @@ public class MongoDbGameDao implements GameDao {
   @Override
   public void addQuestion(String questionId, String gameId) {
     final Game game = database.getCollection(COLLECTION_GAMES, Game.class)
-        .find(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_IS_BEING_PLAYED, false)))
+        .find(and(eq(ATTRIBUTE_GAME_ID, gameId),
+            eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.WAITING_FOR_PLAYERS.toString())))
         .sort(eq(ATTRIBUTE_ROUND, -1)).first();
     if (null == game) {
       throw new IllegalStateException("Game is already in progress!!");
@@ -119,7 +132,8 @@ public class MongoDbGameDao implements GameDao {
   @Override
   public Question getQuestion(String gameId, String playerId) {
     final Game currentQuestion = database.getCollection(COLLECTION_GAMES, Game.class)
-        .find(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_IS_BEING_PLAYED, false)))
+        .find(and(eq(ATTRIBUTE_GAME_ID, gameId),
+            eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.IN_PROGRESS.toString())))
         .sort(eq(ATTRIBUTE_ROUND, -1)).first();
     final Question question = questionsDao.getQuestion(currentQuestion.getQuestionId());
     return question;
@@ -127,6 +141,7 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Gets statistics of the game for a specific question
+   *
    * @param questionId
    * @param gameId
    * @return
@@ -148,6 +163,7 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Creates a new game entry
+   *
    * @return
    */
   @Override
@@ -158,10 +174,11 @@ public class MongoDbGameDao implements GameDao {
         .firstChoiceCount(0)
         .secondChoiceCount(0)
         .thirdChoiceCount(0)
-        .gameFlag(false)
+        .gameStatus("WAITING_FOR_PLAYERS")
         .players(Collections.emptyList())
         .questionId("")
         .round("1")
+        .createdAt(Instant.now().getEpochSecond() + "")
         .build();
     database.getCollection(COLLECTION_GAMES, Game.class).insertOne(newGame);
     return gameId;
@@ -175,7 +192,19 @@ public class MongoDbGameDao implements GameDao {
   @Override
   public List<Game> getOpenGames() {
     FindIterable<Game> openGames = database.getCollection(COLLECTION_GAMES, Game.class)
-        .find(eq(ATTRIBUTE_IS_BEING_PLAYED, false))
+        .find(eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.WAITING_FOR_PLAYERS.toString()))
+        .sort(eq(ATTRIBUTE_ROUND, -1));
+    List<Game> result = new ArrayList<>();
+    for (Game g : openGames) {
+      result.add(g);
+    }
+    return result;
+  }
+
+  @Override
+  public List<Game> getInProgressGames() {
+    FindIterable<Game> openGames = database.getCollection(COLLECTION_GAMES, Game.class)
+        .find(eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.IN_PROGRESS.toString()))
         .sort(eq(ATTRIBUTE_ROUND, -1));
     List<Game> result = new ArrayList<>();
     for (Game g : openGames) {
@@ -186,20 +215,34 @@ public class MongoDbGameDao implements GameDao {
 
   /**
    * Check if player is still in the game.
+   *
    * @param gameId
    * @param playerId
    * @return
    */
   @Override
   public boolean isPlayerInTheGame(String gameId, String playerId) {
-    final Game game = database.getCollection(COLLECTION_GAMES, Game.class).find(eq(ATTRIBUTE_GAME_ID, gameId)).sort(eq(ATTRIBUTE_ROUND, -1)).first();
+    final Game game = database.getCollection(COLLECTION_GAMES, Game.class)
+        .find(eq(ATTRIBUTE_GAME_ID, gameId)).sort(eq(ATTRIBUTE_ROUND, -1)).first();
     final List<Map<String, String>> players = game.getPlayers();
-    for(Map<String, String> player: players) {
-      if(player.get(ATTRIBUTE_PLAYER_ID).equals(playerId)) {
+    for (Map<String, String> player : players) {
+      if (player.get(ATTRIBUTE_PLAYER_ID).equals(playerId)) {
         return true;
       }
     }
     return false;
+  }
+
+  @Override
+  public void startGame(String gameId) {
+    database.getCollection(COLLECTION_GAMES).updateOne(eq(ATTRIBUTE_GAME_ID, gameId),
+        Updates.set(ATTRIBUTE_GAME_STATUS, GameStatusEnum.IN_PROGRESS.toString()));
+  }
+
+  @Override
+  public void closeGame(String gameId) {
+    database.getCollection(COLLECTION_GAMES).updateOne(eq(ATTRIBUTE_GAME_ID, gameId),
+        Updates.set(ATTRIBUTE_GAME_STATUS, GameStatusEnum.CLOSED.toString()));
   }
 
   /**
@@ -225,8 +268,11 @@ public class MongoDbGameDao implements GameDao {
         choiceAttribute = ATTRIBUTE_THIRD_CHOICE_COUNT;
         break;
       }
-      default: break;
+      default:
+        break;
     }
-    database.getCollection(COLLECTION_GAMES).updateOne(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_QUESTION_ID, questionId)), Updates.inc(choiceAttribute, 1));
+    database.getCollection(COLLECTION_GAMES)
+        .updateOne(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_QUESTION_ID, questionId)),
+            Updates.inc(choiceAttribute, 1));
   }
 }

@@ -51,6 +51,11 @@ public class MockGameDao implements GameDao {
   }
 
   @Override
+  public List<Game> getInProgressGames() {
+    return null;
+  }
+
+  @Override
   public void submitAnswer(String questionId, String choiceId, String gameId) {
 
   }
@@ -58,5 +63,15 @@ public class MockGameDao implements GameDao {
   @Override
   public boolean isPlayerInTheGame(String gameId, String playerId) {
     return false;
+  }
+
+  @Override
+  public void startGame(String gameId) {
+
+  }
+
+  @Override
+  public void closeGame(String gameId) {
+
   }
 }

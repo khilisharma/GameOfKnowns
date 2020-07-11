@@ -22,7 +22,13 @@ public interface GameDao {
 
   List<Game> getOpenGames();
 
+  List<Game> getInProgressGames();
+
   void submitAnswer(String questionId, String choiceId, String gameId);
 
   boolean isPlayerInTheGame(String gameId, String playerId);
+
+  void startGame(String gameId);
+
+  void closeGame(String gameId);
 }
