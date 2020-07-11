@@ -10,7 +10,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import lombok.AllArgsConstructor;
 
+/**
+ * Fetches the games that are open from the games collection and assign players to each game if the number of players is less than the players limit
+ */
+@AllArgsConstructor
 public class PlayerAssigner {
 
   @Inject
@@ -18,23 +23,20 @@ public class PlayerAssigner {
   @Inject
   private TokenDao tokenDao;
 
-  /**
-   * Fetches the open games and adds the player to any of those games
-   */
   public void init() {
     //find player who is not in any game
     //call token table for entries where game id is empty , take that list and assign random game to those players
     List<Game> openGames = gameDao.getOpenGames();
-    List<String> unassignedPlayers = tokenDao.unassignedPlayers();
-    Set<String> asssignedPlayers = new HashSet<>();
+    List<Player> unassignedPlayers = tokenDao.unassignedPlayers();
+    Set<Player> asssignedPlayers = new HashSet<>();
     for (Game game : openGames) {
       int playersCount = game.getPlayers().size();
-      for (String unassignedPlayer : unassignedPlayers) {
+      for (Player unassignedPlayer : unassignedPlayers) {
         if (playersCount < ATTRIBUTE_MAX_PLAYERS_IN_GAME_LIMIT && !asssignedPlayers
             .contains(unassignedPlayer)) {
           // add the player in token collection and game collection
-          tokenDao.addPlayer("", unassignedPlayer);
-          gameDao.addPlayer(Player.builder().playerId(unassignedPlayer).playerName("").build(),
+          tokenDao.updateToken(unassignedPlayer.getPlayerId(), game.getGameId());
+          gameDao.addPlayer(Player.builder().playerId(unassignedPlayer.getPlayerId()).playerName("").build(),
               game.getGameId());
           asssignedPlayers.add(unassignedPlayer);
           playersCount--;

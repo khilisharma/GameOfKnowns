@@ -1,5 +1,6 @@
 package com.gameofknowns.dao;
 
+import com.gameofknowns.dao.model.Player;
 import com.gameofknowns.dao.model.PlayerStatus;
 import com.gameofknowns.dao.model.PlayerStatusEnum;
 import java.util.List;
@@ -7,8 +8,13 @@ import java.util.List;
 public class MockTokenDao implements TokenDao {
 
   @Override
-  public String addPlayer(String playerName, String playerId) {
-    return "123123123yiuashdjkasd";
+  public String addPlayer(String playerId, String playerName) {
+    return null;
+  }
+
+  @Override
+  public void updateToken(String playerId, String gameId) {
+
   }
 
   @Override
@@ -17,7 +23,7 @@ public class MockTokenDao implements TokenDao {
   }
 
   @Override
-  public List<String> unassignedPlayers() {
+  public List<Player> unassignedPlayers() {
     return null;
   }
 }

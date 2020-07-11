@@ -32,14 +32,17 @@ public class QuestionsApiServiceImpl extends QuestionsApiService {
   public Response getQuestion(@NotNull String playerId, @NotNull String gameId,
       SecurityContext securityContext) throws NotFoundException {
     try {
-      final io.swagger.model.Question response = buildResponse(playerId, gameId);
+      final Question question = gameDao.getQuestion(gameId, playerId);
+      final io.swagger.model.Question response = buildResponse(playerId, gameId, question);
       return Response.ok()
           .entity(mapper.writeValueAsString(response)).build();
     } catch (final ResourceNotFoundException ex) {
       log.debug("Resource not found, playerId: {}, gameId: {}", playerId, gameId, ex);
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Invalid request parameters").build();
     } catch (final IllegalAccessException ex) {
-      return Response.status(Status.fromStatusCode(403)).build();
+      return Response.status(Status.FORBIDDEN).build();
+    } catch (final IllegalStateException ex) {
+      return Response.status(Status.NO_CONTENT).entity("Game not started").build();
     } catch (final Exception ex) {
       log.error("Something went wrong!!", ex);
       return Response.serverError().build();
@@ -48,8 +51,8 @@ public class QuestionsApiServiceImpl extends QuestionsApiService {
   }
 
   private io.swagger.model.Question buildResponse(@NotNull String playerId,
-      @NotNull String gameId) {
-    final Question question = gameDao.getQuestion(gameId, playerId);
+      @NotNull String gameId, Question question) {
+
     final Map<Integer, String> choices = new HashMap<>();
     for (Entry<String, String> choice : question.getChoices().entrySet()) {
       choices.put(Integer.parseInt(choice.getKey()),

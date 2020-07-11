@@ -38,7 +38,7 @@ public class StatsApiServiceImpl extends StatsApiService {
           mapper.writeValueAsString(response)).build();
     } catch (final ResourceNotFoundException ex) {
       log.debug("Resource not found gameId: {}, questionId: {}", gameId, questionId, ex);
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Invalid Request parameters").build();
     } catch (final Exception ex) {
       log.error("Something went wrong!!", ex);
       return Response.serverError().build();

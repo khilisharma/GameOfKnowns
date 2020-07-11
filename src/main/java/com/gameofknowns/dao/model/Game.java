@@ -30,7 +30,7 @@ public class Game {
     this.gameId=gameId;
     this.round=round;
     this.questionId=questionId;
-    this.gameStatus = this.gameStatus;
+    this.gameStatus = gameStatus;
     this.players=players;
     this.firstChoiceCount=firstChoiceCount;
     this.secondChoiceCount=secondChoiceCount;

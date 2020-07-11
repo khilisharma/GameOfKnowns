@@ -56,7 +56,7 @@ public class MockGameDao implements GameDao {
   }
 
   @Override
-  public void submitAnswer(String questionId, String choiceId, String gameId) {
+  public void countAnswerChoice(String questionId, String choiceId, String gameId) {
 
   }
 
@@ -66,12 +66,17 @@ public class MockGameDao implements GameDao {
   }
 
   @Override
-  public void startGame(String gameId) {
+  public void startGame(String gameId, String roundId) {
 
   }
 
   @Override
-  public void closeGame(String gameId) {
+  public void closeGame(String gameId, String roundId) {
 
+  }
+
+  @Override
+  public boolean isQuestionAsked(String gameId, String questionId) {
+    return false;
   }
 }

@@ -33,7 +33,7 @@ public class GameApiServiceImpl extends GameApiService {
     }
     try {
       final UUID playerUuid = UUID.randomUUID();
-      final String tokenId = tokenDao.addPlayer(name, playerUuid.randomUUID().toString());
+      final String tokenId = tokenDao.addPlayer(playerUuid.randomUUID().toString(), name);
       // TODO: think of retry mechanism when the game is filled while processing the request
       final JoinGameJob reponse = new JoinGameJob();
       reponse.setTokenId(tokenId);

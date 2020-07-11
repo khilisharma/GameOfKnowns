@@ -2,6 +2,7 @@ package io.swagger.api.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gameofknowns.dao.TokenDao;
+import com.gameofknowns.dao.exception.ResourceNotFoundException;
 import com.gameofknowns.dao.model.PlayerStatus;
 import com.gameofknowns.dao.model.PlayerStatusEnum;
 import io.swagger.api.ApiResponseMessage;
@@ -12,6 +13,7 @@ import io.swagger.model.TokenDetails.StatusEnum;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +44,12 @@ public class TokenApiServiceImpl extends TokenApiService {
       responseToken.setGameId(status.getGameId().orElseThrow(Exception::new));
       responseToken.setPlayerId(status.getPlayerId().orElseThrow(Exception::new));
       return Response.ok()
-          .entity(new ApiResponseMessage(ApiResponseMessage.OK,
-              mapper.writeValueAsString(responseToken))).build();
+          .entity(mapper.writeValueAsString(responseToken)).build();
+    } catch (final ResourceNotFoundException ex) {
+      log.debug("Resource not found tokenId: {}", tokenId, ex);
+      return Response.status(Status.NOT_FOUND)
+          .entity("TokenId not found")
+          .build();
     } catch (final Exception ex) {
       log.error("Something went wrong!!", ex);
       return Response.serverError().build();

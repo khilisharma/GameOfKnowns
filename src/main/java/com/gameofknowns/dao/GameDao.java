@@ -24,11 +24,13 @@ public interface GameDao {
 
   List<Game> getInProgressGames();
 
-  void submitAnswer(String questionId, String choiceId, String gameId);
+  void countAnswerChoice(String questionId, String choiceId, String gameId);
 
   boolean isPlayerInTheGame(String gameId, String playerId);
 
-  void startGame(String gameId);
+  void startGame(String gameId, String roundId);
 
-  void closeGame(String gameId);
+  void closeGame(String gameId, String roundId);
+
+  boolean isQuestionAsked(String gameId, String questionId);
 }

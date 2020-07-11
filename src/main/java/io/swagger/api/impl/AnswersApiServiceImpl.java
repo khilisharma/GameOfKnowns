@@ -42,8 +42,8 @@ public class AnswersApiServiceImpl extends AnswersApiService {
       if (!gameDao.isPlayerInTheGame(gameId, playerId)) {
         return Response.status(Status.FORBIDDEN).build();
       }
-      gameDao.submitAnswer(questionId, choiceId, gameId);
-      if (question.getRightAnswer().keySet().contains(choiceId)) {
+      gameDao.countAnswerChoice(questionId, choiceId, gameId);
+      if (question.getRightAnswer().get("choiceId").equals(choiceId)) {
         gameDao.advancePlayer(gameId, playerId);
         return Response.ok().entity(SubmitAnswerResponse.RIGHT.toString()).build();
       } else {
@@ -52,7 +52,7 @@ public class AnswersApiServiceImpl extends AnswersApiService {
     } catch (final ResourceNotFoundException ex) {
       log.debug("Resouce not found, questionId: {}, gameId: {}, playerId: {}, choiceId: {}",
           questionId, gameId, playerId, choiceId, ex);
-      return Response.status(Status.NOT_FOUND).build();
+      return Response.status(Status.NOT_FOUND).entity("Invalid request parameters!").build();
     } catch (final Exception ex) {
       log.error("Something went wrong!!", ex);
       return Response.status(Status.INTERNAL_SERVER_ERROR).build();
