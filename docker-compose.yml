@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  tomcat:
+    build: .
+    container_name: development
+    ports:
+      - 80:8080
