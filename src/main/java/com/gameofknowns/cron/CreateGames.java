@@ -1,6 +1,6 @@
 package com.gameofknowns.cron;
 
-import com.gameofknowns.dao.MongoDbGameDao;
+import com.gameofknowns.dao.GameDao;
 import javax.inject.Inject;
 import lombok.AllArgsConstructor;
 
@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 public class CreateGames {
 
   @Inject
-  MongoDbGameDao gameDao;
+  GameDao gameDao;
 
   //creates a game entry every minute
   public void init() {
