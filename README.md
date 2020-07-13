@@ -26,5 +26,5 @@ swagger-ui will be directed to that host and not localhost!
 ### Testing locally
 To run the service locally
 1. ```mvn clean package jetty:run```
-1. test url: ```http://localhost:8080/khilisharma/GameOfKnowns/1.0.0/game```
+1. test url: ```http://localhost:8080/rest```
 1. Enter request body as json

@@ -39,6 +39,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
-    <url-pattern>/GameOfKnowns/*</url-pattern>
+    <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
 </web-app>
