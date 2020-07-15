@@ -43,7 +43,7 @@ public class AnswersApiServiceImpl extends AnswersApiService {
         return Response.status(Status.FORBIDDEN).build();
       }
       gameDao.countAnswerChoice(questionId, choiceId, gameId);
-      if (question.getRightAnswer().get("choiceId").equals(choiceId)) {
+      if (question.getRightAnswer().get("id").equals(choiceId)) {
         gameDao.advancePlayer(gameId, playerId);
         return Response.ok().entity(SubmitAnswerResponse.RIGHT.toString()).build();
       } else {
