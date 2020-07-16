@@ -51,7 +51,7 @@ public class AnswersApiServiceImpl extends AnswersApiService {
         gameDao.advancePlayer(gameId, playerId);
         responseMap.put(STATUS, SubmitAnswerResponse.RIGHT.toString());
       } else {
-        responseMap.put(STATUS, SubmitAnswerResponse.RIGHT.toString());
+        responseMap.put(STATUS, SubmitAnswerResponse.WRONG.toString());
       }
       return Response.ok().entity(mapper.writeValueAsString(responseMap)).build();
     } catch (final ResourceNotFoundException ex) {
