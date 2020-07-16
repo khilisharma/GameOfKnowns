@@ -90,6 +90,9 @@ public class MongoDbGameDao implements GameDao {
       currentRound.setGameStatus(GameStatusEnum.WAITING_FOR_PLAYERS.toString());
       currentRound.setPlayers(Arrays.asList());
       currentRound.setQuestionId("");
+      currentRound.setFirstChoiceCount(0);
+      currentRound.setSecondChoiceCount(0);
+      currentRound.setThirdChoiceCount(0);
       database.getCollection(COLLECTION_GAMES, Game.class).insertOne(currentRound);
     } else {
       final Document newPlayerDocument = new Document();
