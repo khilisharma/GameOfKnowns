@@ -133,10 +133,10 @@ public class MongoDbGameDao implements GameDao {
   @Override
   public Question getQuestion(String gameId, String playerId) {
     final Game currentQuestion = database.getCollection(COLLECTION_GAMES, Game.class)
-        .find(and(eq(ATTRIBUTE_GAME_ID, gameId),
-            eq(ATTRIBUTE_GAME_STATUS, GameStatusEnum.IN_PROGRESS.toString())))
+        .find(eq(ATTRIBUTE_GAME_ID, gameId))
         .sort(eq(ATTRIBUTE_ROUND, -1)).first();
-    if (currentQuestion == null) {
+    if (currentQuestion != null &&
+        !GameStatusEnum.valueOf(currentQuestion.getGameStatus()).equals(GameStatusEnum.IN_PROGRESS)) {
       throw new IllegalStateException("Game has not started");
     }
     final Question question = questionsDao.getQuestion(currentQuestion.getQuestionId());
