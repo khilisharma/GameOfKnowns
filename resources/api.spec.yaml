@@ -152,6 +152,36 @@ paths:
           description: Bad input parameter
         401:
           description: Not authorized to access
+  /winner:
+    get:
+      summary: Checks whether the player is the game of the winner or not.
+      operationId: isWinner
+      description: Displays the winner.
+      parameters:
+        - in: query
+          name: gameId
+          schema:
+            type: string
+          description: Unique identifier of the game which the player was playing
+        - in: query
+          name: playerId
+          schema:
+            type: string
+          description: Unique identifier of the player
+      responses:
+        200:
+          description: Winner object returns whether the player is winner or not
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Winner'
+        404:
+          description: Resource Not Found
+        400:
+          description: Bad input parameter
+        401:
+          description: Not authorized to access
+
 components:
   schemas:
     Player:
@@ -175,6 +205,11 @@ components:
           type: string
         count:
           type: integer
+    Winner:
+      type: object
+      properties:
+        winStatus:
+          type: string
     TokenDetails:
       type: object
       properties:

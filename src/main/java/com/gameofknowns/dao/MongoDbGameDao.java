@@ -284,4 +284,13 @@ public class MongoDbGameDao implements GameDao {
         .updateOne(and(eq(ATTRIBUTE_GAME_ID, gameId), eq(ATTRIBUTE_QUESTION_ID, questionId)),
             Updates.inc(choiceAttribute, 1));
   }
+
+  @Override
+  public Integer numberOfPlayers(String gameId){
+    final Game game = database.getCollection(COLLECTION_GAMES, Game.class)
+      .find(and(eq(ATTRIBUTE_GAME_ID, gameId))).sort(eq(ATTRIBUTE_ROUND, -1)).first();
+
+    return game.getPlayers().size();
+
+  }
 }

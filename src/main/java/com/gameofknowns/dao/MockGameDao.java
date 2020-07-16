@@ -79,4 +79,9 @@ public class MockGameDao implements GameDao {
   public boolean isQuestionAsked(String gameId, String questionId) {
     return false;
   }
+
+  @Override
+  public Integer numberOfPlayers(String gameId) {
+    return null;
+  }
 }

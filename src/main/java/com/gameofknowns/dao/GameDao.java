@@ -33,4 +33,6 @@ public interface GameDao {
   void closeGame(String gameId, String roundId);
 
   boolean isQuestionAsked(String gameId, String questionId);
+
+  Integer numberOfPlayers(String gameId);
 }
