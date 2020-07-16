@@ -9,6 +9,8 @@ import io.swagger.api.AnswersApiService;
 import io.swagger.api.NotFoundException;
 import io.swagger.model.SubmitAnswerRequest;
 import io.swagger.model.SubmitAnswerResponse;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaJerseyServerCodegen", date = "2020-07-07T05:47:13.537Z[GMT]")
 @Slf4j
 public class AnswersApiServiceImpl extends AnswersApiService {
+  private static final String STATUS = "status";
 
   @Inject
   private QuestionsDao questionsDao;
@@ -39,16 +42,18 @@ public class AnswersApiServiceImpl extends AnswersApiService {
     final String playerId = body.getPlayerId();
     try {
       final Question question = questionsDao.getQuestion(questionId);
+      Map<String,String> responseMap = new HashMap<>();
       if (!gameDao.isPlayerInTheGame(gameId, playerId)) {
         return Response.status(Status.FORBIDDEN).build();
       }
       gameDao.countAnswerChoice(questionId, choiceId, gameId);
       if (question.getRightAnswer().get("id").equals(choiceId)) {
         gameDao.advancePlayer(gameId, playerId);
-        return Response.ok().entity(SubmitAnswerResponse.RIGHT.toString()).build();
+        responseMap.put(STATUS, SubmitAnswerResponse.RIGHT.toString());
       } else {
-        return Response.ok().entity(SubmitAnswerResponse.WRONG.toString()).build();
+        responseMap.put(STATUS, SubmitAnswerResponse.RIGHT.toString());
       }
+      return Response.ok().entity(mapper.writeValueAsString(responseMap)).build();
     } catch (final ResourceNotFoundException ex) {
       log.debug("Resouce not found, questionId: {}, gameId: {}, playerId: {}, choiceId: {}",
           questionId, gameId, playerId, choiceId, ex);
