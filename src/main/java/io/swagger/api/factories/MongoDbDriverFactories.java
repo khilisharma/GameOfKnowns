@@ -9,7 +9,7 @@ public class MongoDbDriverFactories {
 
   private static final MongoDBAdapter mongoDBAdapter = MongoDBAdapter.builder()
       .databaseName("TriviaGameDatabase")
-      .ipAddress("192.168.4.20")
+      .ipAddress("172.31.9.162")
       .portNumber(27017)
       .build();
 
