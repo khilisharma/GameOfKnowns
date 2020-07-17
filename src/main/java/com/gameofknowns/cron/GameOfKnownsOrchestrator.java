@@ -5,56 +5,58 @@ import com.gameofknowns.dao.QuestionsDao;
 import com.gameofknowns.dao.TokenDao;
 import io.swagger.api.factories.MongoDbDriverFactories;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+@Slf4j
 public class GameOfKnownsOrchestrator {
 
-  @Option(name = "-str")
-  private String str = "CreateGames";
+  @Option(name = "-n", usage = "Script name to run")
+  private String str;
 
   public static void main(String[] args) throws IOException {
     new GameOfKnownsOrchestrator().doMain(args);
   }
 
   public void doMain(String[] args) throws IOException {
-    GameDao gameDao = MongoDbDriverFactories.getGameDao();
-    TokenDao tokenDao = MongoDbDriverFactories.getTokenDao();
-    QuestionsDao questionsDao = MongoDbDriverFactories.getQuestionsDao();
-    CmdLineParser parser = new CmdLineParser(this);
 
-    StartGame startgame = new StartGame(gameDao, questionsDao);
-    CloseRound closeRound = new CloseRound(gameDao);
-    CreateGames createGames = new CreateGames(gameDao);
-    PlayerAssigner playerAssigner = new PlayerAssigner(gameDao, tokenDao);
+    CmdLineParser parser = new CmdLineParser(this);
 
     try {
       parser.parseArgument(args);
-      if (args == null) {
-        throw new CmdLineException(parser, "No argument is given");
-      }
 
-      if (args.equals("CloseRound")) {
+      if (StringUtils.isBlank(str)) {
+        throw new CmdLineException("No args passed");
+      }
+      GameDao gameDao = MongoDbDriverFactories.getGameDao();
+      TokenDao tokenDao = MongoDbDriverFactories.getTokenDao();
+      QuestionsDao questionsDao = MongoDbDriverFactories.getQuestionsDao();
+
+
+      StartGame startgame = new StartGame(gameDao, questionsDao);
+      CloseRound closeRound = new CloseRound(gameDao);
+      CreateGames createGames = new CreateGames(gameDao);
+      PlayerAssigner playerAssigner = new PlayerAssigner(gameDao, tokenDao);
+
+      if (str.equals("CloseRound")) {
         closeRound.init();
-      } else if (args.equals("CreateGames")) {
+      } else if (str.equals("CreateGames")) {
         createGames.init();
-      } else if (args.equals("PlayerAssigner")) {
+      } else if (str.equals("PlayerAssigner")) {
         playerAssigner.init();
-      } else if (args.equals("StartGame")) {
+      } else if (str.equals("StartGame")) {
         startgame.init();
       } else {
+        log.debug("Invalid option: {}", str);
         System.exit(1);
       }
       System.exit(0);
     } catch (CmdLineException e) {
-      System.err.println(e.getMessage());
-      System.err.println("java SampleMain [options...] arguments...");
-      // print the list of available options
-      parser.printUsage(System.err);
-      System.err.println();
-      return;
+      log.error("Error: {}", e);
+      System.exit(1);
     }
-
   }
 }
