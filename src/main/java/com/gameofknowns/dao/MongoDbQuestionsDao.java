@@ -4,6 +4,7 @@ import static com.gameofknowns.constants.StringConstants.ATTRIBUTE_QUESTION_ID;
 import static com.gameofknowns.constants.StringConstants.COLLECTION_QUESTIONS;
 import static com.mongodb.client.model.Filters.eq;
 
+import com.gameofknowns.dao.exception.ResourceNotFoundException;
 import com.gameofknowns.dao.model.Question;
 import com.mongodb.client.MongoDatabase;
 import javax.inject.Inject;
@@ -24,7 +25,9 @@ public class MongoDbQuestionsDao implements QuestionsDao {
   public Question getQuestion(String questionId) {
     final Question question = database.getCollection(COLLECTION_QUESTIONS)
         .find(eq(ATTRIBUTE_QUESTION_ID, questionId), Question.class).first();  // exclude question id
-
+    if (question == null) {
+      throw new ResourceNotFoundException("Question doesn't exist");
+    }
     return question;
   }
 }

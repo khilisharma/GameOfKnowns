@@ -24,18 +24,14 @@ public class MongoDBAdapter {
   private String databaseName;
 
   public MongoDatabase getDatabase() throws RuntimeException {
-    try {
-      final ServerAddress address = new ServerAddress(ipAddress, portNumber);
-      final List<ServerAddress> serverAddresses = Collections.singletonList(address);
+    final ServerAddress address = new ServerAddress(ipAddress, portNumber);
+    final List<ServerAddress> serverAddresses = Collections.singletonList(address);
 
-      final CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(
+    final CodecRegistry pojoCodecRegistry = org.bson.codecs.configuration.CodecRegistries.fromRegistries(
           MongoClientSettings.getDefaultCodecRegistry(), org.bson.codecs.configuration.CodecRegistries.fromProviders(
               PojoCodecProvider.builder().automatic(true).build()));
-      final MongoClient mongoClient = new MongoClient(serverAddresses);
-      final MongoDatabase database = mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
-      return database;
-    } catch (RuntimeException ex) {
-      throw ex;
-    }
+    final MongoClient mongoClient = new MongoClient(serverAddresses);
+    final MongoDatabase database = mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
+    return database;
   }
 }
